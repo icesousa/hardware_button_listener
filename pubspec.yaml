@@ -1,7 +1,10 @@
 name: hardware_button_listener
 description: "A new Flutter plugin project."
 version: 0.0.1
-homepage:
+homepage: https://github.com/icesousa/hardware_button_listener
+repository: https://github.com/icesousa/hardware_button_listener
+license: MIT
+
 
 environment:
   sdk: ^3.5.4
