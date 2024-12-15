@@ -6,11 +6,7 @@ import 'package:hardware_button_listener/models/hardware_button.dart';
 class HardwareButtonListener {
   /// Listens for hardware button events.
   ///
-  /// The stream emits [HardwareButton] instances for supported hardware
-  /// button actions. Supported buttons include:
-  /// - Volume Up
-  /// - Volume Down
-  /// - Power
+  /// The stream emits [HardwareButton] instances for  physical pressed buttons
   ///
   /// Example usage:
   /// ```dart
