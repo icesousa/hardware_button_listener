@@ -1,5 +1,6 @@
 name: hardware_button_listener
-description: "A new Flutter plugin project."
+description: "A Flutter package that allows you to listen to physical hardware button presses on Android devices, 
+  providing key information like button name and key code through a reactive stream-based API."
 version: 0.0.1
 homepage: https://github.com/icesousa/hardware_button_listener
 repository: https://github.com/icesousa/hardware_button_listener
