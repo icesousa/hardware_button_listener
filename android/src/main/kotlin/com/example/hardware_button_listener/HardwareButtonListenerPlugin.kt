@@ -29,7 +29,7 @@ class HardwareButtonListenerPlugin : FlutterPlugin, MethodCallHandler, ActivityA
       binaryMessenger,
       object : StreamEventsStreamHandler() {
         override fun onListen(arguments: Any?, sink: HardwareButtonEventSink<HardwareButton>) {
-          Log.d("TAG", "OUVINDDO BOTÕES")
+          
 
           eventSink = sink
         }
@@ -73,7 +73,6 @@ class HardwareButtonListenerPlugin : FlutterPlugin, MethodCallHandler, ActivityA
     return keyCodeNames[keyCode] ?: "UNKNOWN_$keyCode"
   }
   fun handleKeyDown(keyCode: Int): Boolean {
-    Log.d("TAG", "ONKEYDOWN TENTANDO DETECTAR BOTÃO APERTADO $keyCode")
 
     val buttonName = getButtonName(keyCode)
 
@@ -83,7 +82,6 @@ class HardwareButtonListenerPlugin : FlutterPlugin, MethodCallHandler, ActivityA
       buttonKey = keyCode.toLong()
     )
 
-    Log.d("TAG", "Attempting to send event: $buttonName")
     eventSink?.success(buttonEvent.toList()) ?: Log.d("TAG", "EventSink is null!")
 
     // Return false to allow the system to process the event or true to consume it
