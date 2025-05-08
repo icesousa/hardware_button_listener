@@ -1,9 +1,28 @@
 import 'package:flutter/services.dart';
 
+enum HardwareButtonPressType {
+  keyDown,
+  keyUp;
+
+  /// Parse the enum from its string representation (e.g. "keyDown").
+  factory HardwareButtonPressType.fromString(String? value) {
+    if (value == null) {
+      throw ArgumentError.notNull('value');
+    }
+    return HardwareButtonPressType.values.firstWhere(
+      (e) => e.toString().split('.').last == value,
+      orElse: () => throw ArgumentError('Unknown HardwareButtonPressType: $value'),
+    );
+  }
+
+  /// Serialize to its string name (e.g. "keyDown").
+  String toValue() => toString().split('.').last;
+}
+
 class HardwareButton {
   final String? buttonName;
   final int? buttonKey;
-  final String? pressType;
+  final HardwareButtonPressType? pressType;
 
   HardwareButton({
     this.buttonName,
@@ -11,8 +30,13 @@ class HardwareButton {
     this.pressType,
   });
 
+  /// Now encodes the pressType as a String
   List<dynamic> encode() {
-    return [buttonName, buttonKey, pressType];
+    return [
+      buttonName,
+      buttonKey,
+      pressType?.toValue(),
+    ];
   }
 
   static HardwareButton decode(HardwareButton data) {
@@ -40,7 +64,7 @@ class HardwareButtonMethodCodec extends StandardMethodCodec {
       return HardwareButton(
         buttonName: decoded[0] as String?,
         buttonKey: decoded[1] as int?,
-        pressType: decoded[2] as String?,
+        pressType: decoded[2] != null ? HardwareButtonPressType.fromString(decoded[2] as String) : null,
       );
     }
 
