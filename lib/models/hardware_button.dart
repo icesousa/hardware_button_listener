@@ -3,26 +3,29 @@ import 'package:flutter/services.dart';
 class HardwareButton {
   final String? buttonName;
   final int? buttonKey;
+  final String? pressType;
 
   HardwareButton({
     this.buttonName,
     this.buttonKey,
+    this.pressType,
   });
 
   List<dynamic> encode() {
-    return [buttonName, buttonKey];
+    return [buttonName, buttonKey, pressType];
   }
 
   static HardwareButton decode(HardwareButton data) {
     return HardwareButton(
       buttonName: data.buttonName,
       buttonKey: data.buttonKey,
+      pressType: data.pressType,
     );
   }
 
   @override
   String toString() {
-    return 'HardwareButton(buttonName: $buttonName, buttonKey: $buttonKey)';
+    return 'HardwareButton(buttonName: $buttonName, buttonKey: $buttonKey, pressType: $pressType)';
   }
 }
 
@@ -33,10 +36,11 @@ class HardwareButtonMethodCodec extends StandardMethodCodec {
   dynamic decodeEnvelope(ByteData envelope) {
     final decoded = super.decodeEnvelope(envelope);
 
-    if (decoded is List<dynamic> && decoded.length == 2) {
+    if (decoded is List<dynamic> && decoded.length == 3) {
       return HardwareButton(
         buttonName: decoded[0] as String?,
         buttonKey: decoded[1] as int?,
+        pressType: decoded[2] as String?,
       );
     }
 

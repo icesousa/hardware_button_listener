@@ -29,7 +29,7 @@ class HardwareButtonListenerPlugin : FlutterPlugin, MethodCallHandler, ActivityA
       binaryMessenger,
       object : StreamEventsStreamHandler() {
         override fun onListen(arguments: Any?, sink: HardwareButtonEventSink<HardwareButton>) {
-          
+
 
           eventSink = sink
         }
@@ -72,21 +72,6 @@ class HardwareButtonListenerPlugin : FlutterPlugin, MethodCallHandler, ActivityA
   private fun getButtonName(keyCode: Int): String {
     return keyCodeNames[keyCode] ?: "UNKNOWN_$keyCode"
   }
-  fun handleKeyDown(keyCode: Int): Boolean {
-
-    val buttonName = getButtonName(keyCode)
-
-
-    val buttonEvent = HardwareButton(
-      buttonName = buttonName,
-      buttonKey = keyCode.toLong()
-    )
-
-    eventSink?.success(buttonEvent.toList()) ?: Log.d("TAG", "EventSink is null!")
-
-    // Return false to allow the system to process the event or true to consume it
-    return false
-  }
 
   override fun onMethodCall(call: MethodCall, result: Result) {
     if (call.method == "getPlatformVersion") {
@@ -101,24 +86,38 @@ class HardwareButtonListenerPlugin : FlutterPlugin, MethodCallHandler, ActivityA
 
   }
 
+  private fun emit(name: String, keyCode: Int, type: String) {
+    val btn = HardwareButton(name, keyCode.toLong(), type)
+    eventSink?.success(btn.toList())
+  }
+
   override fun onAttachedToActivity(binding: ActivityPluginBinding) {
     activity = binding.activity
 
-    // Intercepta eventos de teclado
     val originalCallback = activity?.window?.callback
     activity?.window?.callback = object : android.view.Window.Callback by originalCallback!! {
       override fun dispatchKeyEvent(event: KeyEvent?): Boolean {
-        if (event?.action == KeyEvent.ACTION_DOWN) {
-          val keyCode = event.keyCode
-          // Redireciona para o método handleKeyDown
-          if (handleKeyDown(keyCode)) {
-            return true // Consome o evento
+        if(event == null){
+          return false;
+        }
+
+        val code = event.keyCode
+        val name = getButtonName(code)
+
+        when (event.action) {
+          KeyEvent.ACTION_DOWN -> {
+            emit(name, code, "keyDown")
+          }
+          KeyEvent.ACTION_UP -> {
+            emit(name, code, "keyUp")
           }
         }
-        return originalCallback!!.dispatchKeyEvent(event) // Processa o evento normalmente
+        // allow normal system handling too
+        return originalCallback!!.dispatchKeyEvent(event)
       }
     }
   }
+
 
 
 
