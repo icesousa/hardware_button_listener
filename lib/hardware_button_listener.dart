@@ -6,12 +6,12 @@ import 'package:hardware_button_listener/models/hardware_button.dart';
 class HardwareButtonListener {
   /// Listens for hardware button events.
   ///
-  /// The stream emits [HardwareButton] instances for  physical pressed buttons
+  /// The stream emits [HardwareButton] instances for physical pressed buttons
   ///
   /// Example usage:
   /// ```dart
   /// final subscription = HardwareButtonListener().listen((event) {
-  ///   print('Button pressed: ${event.type}');
+  ///   print('Button pressed: ${event.buttonName}');
   /// });
   /// ```
   /// Returns a [StreamSubscription] for managing the event stream.
