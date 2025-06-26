@@ -1,6 +1,6 @@
 # Hardware Button Listener
 
-**Hardware Button Listener** is a Flutter package that allows you to listen to physical hardware button presses on Android devices, such as volume buttons or other device-specific keys like devices with attached QRCODE read button.
+**Hardware Button Listener** is a Flutter package that allows you to listen to physical hardware button presses on Android devices, such as volume buttons or other device-specific keys like devices with attached QR code reader button.
 
 ## Features
 
