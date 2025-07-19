@@ -1,28 +1,55 @@
 import 'package:flutter/services.dart';
 
+enum HardwareButtonPressType {
+  keyDown,
+  keyUp;
+
+  /// Parse the enum from its string representation (e.g. "keyDown").
+  factory HardwareButtonPressType.fromString(String? value) {
+    if (value == null) {
+      throw ArgumentError.notNull('value');
+    }
+    return HardwareButtonPressType.values.firstWhere(
+      (e) => e.toString().split('.').last == value,
+      orElse: () => throw ArgumentError('Unknown HardwareButtonPressType: $value'),
+    );
+  }
+
+  /// Serialize to its string name (e.g. "keyDown").
+  String toValue() => toString().split('.').last;
+}
+
 class HardwareButton {
   final String? buttonName;
   final int? buttonKey;
+  final HardwareButtonPressType? pressType;
 
   HardwareButton({
     this.buttonName,
     this.buttonKey,
+    this.pressType,
   });
 
+  /// Now encodes the pressType as a String
   List<dynamic> encode() {
-    return [buttonName, buttonKey];
+    return [
+      buttonName,
+      buttonKey,
+      pressType?.toValue(),
+    ];
   }
 
   static HardwareButton decode(HardwareButton data) {
     return HardwareButton(
       buttonName: data.buttonName,
       buttonKey: data.buttonKey,
+      pressType: data.pressType,
     );
   }
 
   @override
   String toString() {
-    return 'HardwareButton(buttonName: $buttonName, buttonKey: $buttonKey)';
+    return 'HardwareButton(buttonName: $buttonName, buttonKey: $buttonKey, pressType: $pressType)';
   }
 }
 
@@ -33,10 +60,11 @@ class HardwareButtonMethodCodec extends StandardMethodCodec {
   dynamic decodeEnvelope(ByteData envelope) {
     final decoded = super.decodeEnvelope(envelope);
 
-    if (decoded is List<dynamic> && decoded.length == 2) {
+    if (decoded is List<dynamic> && decoded.length == 3) {
       return HardwareButton(
         buttonName: decoded[0] as String?,
         buttonKey: decoded[1] as int?,
+        pressType: decoded[2] != null ? HardwareButtonPressType.fromString(decoded[2] as String) : null,
       );
     }
 

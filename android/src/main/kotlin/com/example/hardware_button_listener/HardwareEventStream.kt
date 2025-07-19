@@ -16,48 +16,39 @@ class FlutterError(
 
 data class HardwareButton(
     val buttonName: String? = null,
-    val buttonKey: Long? = null
+    val buttonKey: Long? = null,
+    val pressType: String? = null
 ) {
     companion object {
         fun fromList(list: List<Any?>): HardwareButton {
-            val buttonName = list[0] as? String
-            val buttonKey = list[1] as? Long
-            return HardwareButton(buttonName, buttonKey)
+            return HardwareButton(
+                buttonName = list.getOrNull(0) as? String,
+                buttonKey  = (list.getOrNull(1) as? Number)?.toLong(),
+                pressType  = list.getOrNull(2) as? String
+            )
         }
     }
 
-    fun toList(): List<Any?> {
-        return listOf(
-            buttonName,
-            buttonKey
-        )
-    }
+    fun toList(): List<Any?> = listOf(
+        buttonName,
+        buttonKey,
+        pressType
+    )
 }
 
 private class HardwareButtonStreamCodec : StandardMessageCodec() {
     override fun readValueOfType(type: Byte, buffer: ByteBuffer): Any? {
-        return when (type) {
-            129.toByte() -> {
-                val list = readValue(buffer) as? List<*>
-                if (list != null && list.size >= 2) {
-                    HardwareButton(
-                        buttonName = list[0] as? String,
-                        buttonKey = (list[1] as? Number)?.toLong()
-                    )
-                } else {
-                    throw FormatException("Invalid HardwareButton format")
-                }
-            }
-            else -> super.readValueOfType(type, buffer)
-        }
+        return if (type == 129.toByte()) {
+            val list = readValue(buffer) as? List<*>
+            if (list != null && list.size >= 3) HardwareButton.fromList(list as List<Any?>)
+            else throw FormatException("Invalid HardwareButton format")
+        } else super.readValueOfType(type, buffer)
     }
-
-
     override fun writeValue(stream: ByteArrayOutputStream, value: Any?) {
         when (value) {
             is HardwareButton -> {
                 stream.write(129) // Custom type marker
-                writeValue(stream, listOf(value.buttonName, value.buttonKey))
+                writeValue(stream, value.toList())
             }
             else -> super.writeValue(stream, value)
         }
